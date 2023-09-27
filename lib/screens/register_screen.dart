@@ -8,21 +8,22 @@ import 'package:chat_app/widgets/auth/social_media_buttons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LogIn extends StatefulWidget {
-  static String routeName = "ieee_app/pages/login.dart";
-  const LogIn({super.key});
+class Register extends StatefulWidget {
+  static String routeName = "ieee_app/pages/Register.dart";
+  const Register({super.key});
 
   @override
-  State<LogIn> createState() => _LogInState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _LogInState extends State<LogIn> {
+class _RegisterState extends State<Register> {
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
-  // UserCredential? _userCredential;
   bool _obscureText = true;
   final _formkey = GlobalKey<FormState>();
-  String _password = '';
+
+  String _username = '';
   String _email = '';
+  String _password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,9 @@ class _LogInState extends State<LogIn> {
               children: [
                 //
                 //-- Sb 's logo
+                const SizedBox(
+                  height: 20,
+                ),
                 SizedBox(
                   height: 80,
                   child: Image.asset(
@@ -62,6 +66,57 @@ class _LogInState extends State<LogIn> {
                     key: _formkey,
                     child: Column(
                       children: [
+                        //
+                        //-- username field title
+                        const FormFieldTitle(
+                          title: "User Name",
+                        ),
+                        //
+                        //-- username field
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              errorStyle: const TextStyle(
+                                fontSize: 12,
+                              ),
+                              hintText: "Enter your user name",
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              prefixIcon:
+                                  const Icon(Icons.account_circle_outlined),
+                              prefixIconColor: MaterialStateColor.resolveWith(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.focused)) {
+                                    return const Color(0xff00679a);
+                                  }
+                                  if (states.contains(MaterialState.error)) {
+                                    return const Color(0xffc23636);
+                                  }
+                                  return Colors.grey;
+                                },
+                              ),
+                            ),
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.name,
+                            validator: (value) {
+                              if (value!.isEmpty || value.length < 8) {
+                                return 'Please enter a valid user name (8 characters)!';
+                              } else {
+                                return null;
+                              }
+                            },
+                            onSaved: (newValue) {
+                              _username = newValue!;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
                         //
                         //-- email field title
                         const FormFieldTitle(
@@ -182,44 +237,23 @@ class _LogInState extends State<LogIn> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20,
-                        ),
-                        //
-                        //-- password reset button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            AuthTextButton(
-                              buttonText: "Forget password ?",
-                              fontSize: 16,
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
+                          height: 30,
                         ),
                         //
                         //--login button
                         AuthFilledButton(
-                            text: "Login",
-                            onPressed: () {
-                              if (_formkey.currentState!.validate()) {
-                                _formkey.currentState!.save();
-                              }
-                              Auth.logIn(
-                                context: context,
-                                firebaseAuthInstance: _authInstance,
-                                // userCred: _userCredential!,
-                                email: _email,
-                                password: _password,
-                              );
-                            }),
+                          text: "Register",
+                          onPressed: () {
+                            if (_formkey.currentState!.validate()) {
+                              _formkey.currentState!.save();
+                            }
+                          },
+                        ),
                         const SizedBox(
                           height: 20,
                         ),
                         //-- horizontal divider
-                        const HorizontalDivider(dividerText: "Login"),
+                        const HorizontalDivider(dividerText: "Register"),
                         const SizedBox(
                           height: 10,
                         ),
@@ -253,14 +287,14 @@ class _LogInState extends State<LogIn> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Text(
-                              "Don't have an account ?",
+                              "Already have an account ?",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
                             AuthTextButton(
-                              buttonText: "Register",
+                              buttonText: "Login",
                               fontSize: 20,
                               onPressed: () {},
                             ),

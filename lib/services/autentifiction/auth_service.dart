@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Auth {
-  static signIn({
+  static logIn({
     required BuildContext context,
     required FirebaseAuth firebaseAuthInstance,
     // required UserCredential userCred,
