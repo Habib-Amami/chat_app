@@ -1,9 +1,11 @@
 import 'package:chat_app/constants/images.dart';
+import 'package:chat_app/services/autentifiction/auth_service.dart';
 import 'package:chat_app/widgets/auth/auth_text_button.dart';
 import 'package:chat_app/widgets/auth/formfield_title.dart';
 import 'package:chat_app/widgets/auth/horizontal_divider.dart';
 import 'package:chat_app/widgets/auth/auth_filled_button.dart';
 import 'package:chat_app/widgets/auth/social_media_buttons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LogIn extends StatefulWidget {
@@ -15,10 +17,12 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
+  final FirebaseAuth _authInstance = FirebaseAuth.instance;
+  // UserCredential? _userCredential;
   bool _obscureText = true;
   final _formkey = GlobalKey<FormState>();
-  late String? _password;
-  late String? _email;
+  String _password = '';
+  String _email = '';
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +108,9 @@ class _LogInState extends State<LogIn> {
                                 return null;
                               }
                             },
-                            onSaved: (newValue) => _email = newValue,
+                            onSaved: (newValue) {
+                              _email = newValue!;
+                            },
                           ),
                         ),
                         const SizedBox(
@@ -170,12 +176,9 @@ class _LogInState extends State<LogIn> {
                               }
                               return null; // Password is valid
                             },
-                            onFieldSubmitted: (_) {
-                              if (_formkey.currentState!.validate()) {
-                                _formkey.currentState!.save();
-                              }
+                            onSaved: (newValue) {
+                              _password = newValue!;
                             },
-                            onSaved: (newValue) => _password = newValue,
                           ),
                         ),
                         const SizedBox(
@@ -199,9 +202,19 @@ class _LogInState extends State<LogIn> {
                         //
                         //--login button
                         AuthFilledButton(
-                          text: "Login",
-                          onPressed: () {},
-                        ),
+                            text: "Login",
+                            onPressed: () {
+                              if (_formkey.currentState!.validate()) {
+                                _formkey.currentState!.save();
+                              }
+                              Auth.signIn(
+                                context: context,
+                                firebaseAuthInstance: _authInstance,
+                                // userCred: _userCredential!,
+                                email: _email,
+                                password: _password,
+                              );
+                            }),
                         const SizedBox(
                           height: 20,
                         ),
@@ -218,14 +231,14 @@ class _LogInState extends State<LogIn> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SocialMediaButton(
-                                image: "assets/images/google_logo.png",
+                                image: googleLogo,
                                 onPressed: () {},
                               ),
                               const SizedBox(
                                 width: 20,
                               ),
                               SocialMediaButton(
-                                image: "assets/images/facebook_logo.png",
+                                image: facebookLogo,
                                 onPressed: () {},
                               )
                             ],
